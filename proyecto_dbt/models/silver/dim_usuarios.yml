@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: dim_usuarios
+    description: |
+      Dimensión de usuarios. Contiene información limpia y estandarizada de los usuarios
+      registrados en la plataforma.
+    columns:
+      - name: usuario_id
+        description: "Identificador único del usuario. Clave primaria."
+        tests:
+          - unique
+          - not_null
+      - name: nombre_usuario
+        description: "Nombre del usuario, limpio (espacios trimmeados)."
+      - name: apellido_usuario
+        description: "Apellido del usuario, limpio (espacios trimmeados)."
+      - name: email_usuario
+        description: "Correo electrónico del usuario. Utilizado para contacto y como identificador secundario."
+        tests:
+          - not_null
+          - unique
+      - name: fecha_registro
+        description: "Fecha en que el usuario se registró en la plataforma."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date

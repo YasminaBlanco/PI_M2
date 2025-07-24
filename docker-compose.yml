@@ -1,0 +1,80 @@
+# mi_proyecto_pg/docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      LC_ALL: C.UTF-8
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"  
+      POSTGRES_HOST_AUTH_METHOD: md5
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"] 
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4 # Imagen oficial de PgAdmin 4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}     # Email para el inicio de sesión en PgAdmin
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Contraseña para el inicio de sesión en PgAdmin
+      PGADMIN_LISTEN_PORT: 80                 # Puerto donde PgAdmin escuchará internamente
+    ports:
+      - "5050:80"                             # Mapea el puerto 8080 del host al puerto 80 del contenedor PgAdmin
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin       # Persistencia de los datos de configuración de PgAdmin
+    depends_on:
+      db:
+        condition: service_healthy            # Asegura que PgAdmin solo inicie cuando la DB esté healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  dbt:
+    build:
+      context: .
+    container_name: dbt_container
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./ecommerce:/app/ecommerce_project 
+      - ./dbt_profiles:/root/.dbt
+    environment:
+      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: tail -f /dev/null
+
+  streamlit:
+    build:
+      context: ./streamlit 
+      dockerfile: Dockerfile
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./streamlit:/app/streamlit 
+      - ./dbt_profiles:/root/.dbt 
+    depends_on:
+      db:
+        condition: service_healthy
+    command: streamlit run /app/streamlit/app.py
+    
+volumes:
+  data:
+  pgadmin-data:

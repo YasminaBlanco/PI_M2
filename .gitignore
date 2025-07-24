@@ -1,0 +1,6 @@
+.venv
+.proyecto
+ecommerce/
+__pycache__/
+pgadmin-data/
+data/

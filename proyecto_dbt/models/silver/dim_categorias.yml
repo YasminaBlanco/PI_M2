@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_categorias
+    description: |
+      Dimension de categorías de productos. Contiene información limpia y estandarizada
+      de las categorías, lista para ser utilizada en otras dimensiones o tablas de hechos.
+    columns:
+      - name: categoria_id
+        description: "Identificador único de la categoría. Clave primaria."
+        tests:
+          - unique
+          - not_null
+      - name: nombre_categoria
+        description: "Nombre limpio y estandarizado de la categoría (espacios trimmeados)."
+        tests:
+          - not_null
+      - name: descripcion
+        description: "Descripción de la categoría."

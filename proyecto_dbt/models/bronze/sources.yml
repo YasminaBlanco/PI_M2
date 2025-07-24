@@ -1,0 +1,179 @@
+version: 2
+
+sources:
+  - name: ecommerce_db
+    description: "Base de datos PostgreSQL para un ecommerce"
+    database: ecommercedb
+    schema: public
+    tables:
+      - name: usuarios
+        description: "Contiene datos de usuarios registrados en la plataforma"
+        schema: public
+        columns:
+          - name: usuario_id
+            description: "Identificador único del usuario"
+          - name: nombre
+            description: "Nombre del usuario"
+          - name: apellido
+            description: "Apellido del usuario"
+          - name: dni
+            description: "DNI del usuario"
+          - name: email
+            description: "Correo electrónico del usuario"
+          - name: contraseña
+            description: "Contraseña del usuario"
+          - name: fecha_registro
+            description: "Fecha de registro del usuario"
+      - name: reseñas_productos
+        description: "Contiene reseñas de los productos"
+        schema: public
+        columns:
+          - name: reseña_id
+            description: "Identificador único de la reseña"
+          - name: usuario_id
+            description: "Identificador único del usuario que realizó la reseña"
+          - name: producto_id
+            description: "Identificador único del producto reseñado"
+          - name: calificacion
+            description: "Calificación de la reseña"
+          - name: comentario
+            description: "Comentario de la reseña"
+          - name: fecha
+            description: "Fecha de la reseña"
+      - name: productos
+        description: "Contiene información de los productos disponibles"
+        schema: public
+        columns:
+          - name: producto_id
+            description: "Identificador único del producto"
+          - name: nombre
+            description: "Nombre del producto"
+          - name: descripcion
+            description: "Descripción del producto"
+          - name: precio
+            description: "Precio del producto"
+          - name: stock
+            description: "Stock disponible del producto"
+          - name: categoria_id
+            description: "Identificador único de la categoría del producto"
+      - name: ordenes_metodos_pago
+        description: "Contiene información de los métodos de pago y las órdenes asociadas"
+        schema: public
+        columns:
+          - name: orden_metodo_id
+            description: "Identificador único del método de pago"
+          - name: orden_id
+            description: "Identificador único de la órden"
+          - name: metodo_pago_id
+            description: "Identificador único del método de pago"
+          - name: monto_pagado
+            description: "Monto pagado por el método de pago"
+      - name: ordenes
+        description: "Contiene información de las órdenes realizadas por los usuarios"
+        schema: public
+        columns:
+          - name: orden_id
+            description: "Identificador único de la órden"
+          - name: usuario_id
+            description: "Identificador único del usuario que realizó la órden"
+          - name: fecha_orden
+            description: "Fecha de la órden"
+          - name: total
+            description: "Total de la órden"
+          - name: estado
+            description: "Estado de la órden"
+      - name: metodos_pago
+        description: "Contiene información de los diferentes métodos de pago"
+        schema: public
+        columns:
+          - name: metodo_pago_id
+            description: "Identificador único del método de pago"
+          - name: nombre
+            description: "Nombre del método de pago"
+          - name: descripcion
+            description: "Descripción del método de pago"
+      - name: historial_pagos
+        description: "Contiene información de los pagos realizados por los usuarios"
+        schema: public
+        columns:
+          - name: pago_id
+            description: "Identificador único del pago"
+          - name: orden_id
+            description: "Identificador único de la órden"
+          - name: metodo_pago_id
+            description: "Identificador único del método de pago"
+          - name: monto
+            description: "Monto del pago"
+          - name: fecha_pago
+            description: "Fecha del pago"
+          - name: estado_pago
+            description: "Estado del pago"
+      - name: direcciones_envio
+        description: "Contiene información de las direcciones de envío de los productos"
+        schema: public
+        columns:
+          - name: direccion_id
+            description: "Identificador único de la dirección"
+          - name: usuario_id
+            description: "Identificador único del usuario"
+          - name: calle
+            description: "Calle del usuario"
+          - name: ciudad
+            description: "Ciudad del usuario"
+          - name: departamento
+            description: "Departamento del usuario"
+          - name: provincia
+            description: "Provincia del usuario"
+          - name: distrito
+            description: "Distrito del usuario"
+          - name: estado
+            description: "Estado del usuario"
+          - name: codigo_postal
+            description: "Código postal del usuario"
+          - name: pais
+            description: "País del usuario"
+      - name: detalle_ordenes
+        description: "Contiene información de los detalles de las órdenes realizadas por los usuarios"
+        schema: public
+        columns:
+          - name: detalle_id
+            description: "Identificador único del detalle"
+          - name: orden_id
+            description: "Identificador único de la órden"
+          - name: producto_id
+            description: "Identificador único del producto"
+          - name: cantidad
+            description: "Cantidad del producto"
+          - name: precio_unitario
+            description: "Precio unitario del producto"
+      - name: categorias
+        description: "Contiene información de las categorías de productos"
+        schema: public
+        columns:
+          - name: categoria_id
+            description: "Identificador único de la categoría"
+          - name: nombre
+            description: "Nombre de la categoría"
+          - name: descripcion
+            description: "Descripción de la categoría"
+      - name: carrito
+        description: "Contiene información del carrito de compras de los usuarios"
+        schema: public
+        columns:
+          - name: carrito_id
+            description: "Identificador único del carrito"
+          - name: usuario_id
+            description: "Identificador único del usuario"
+          - name: producto_id
+            description: "Identificador único del producto"
+          - name: cantidad
+            description: "Cantidad del producto"
+          - name: fecha_agregado
+            description: "Fecha de agregado del producto"
+
+  - name: dbt_snapshots
+    database: ecommercedb
+    schema: dbt_snapshots 
+    tables:
+      - name: productos_historico 
+      - name: categorias_historico

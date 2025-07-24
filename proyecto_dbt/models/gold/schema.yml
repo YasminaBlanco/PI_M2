@@ -1,0 +1,121 @@
+version: 2
+
+models:
+  - name: agg_crecimiento_ventas_productos
+    description: "Agregación mensual de crecimiento de ventas por producto."
+    columns:
+      - name: mes_orden
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "mes_orden <= CURRENT_DATE"
+      - name: nombre_producto
+        description: "Nombre del producto asociado a las métricas de crecimiento."
+        tests:
+          - not_null
+      - name: nombre_categoria
+        description: "Nombre de la categoría del producto. Útil para analizar el crecimiento por segmentos."
+      - name: ventas_mensuales
+        description: "Total de ingresos generados por el producto en el 'mes_orden' especificado, de órdenes completadas."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: ventas_mes_anterior
+        description: "Total de ingresos generados por el producto en el mes inmediatamente anterior al 'mes_orden'."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: crecimiento_porcentual
+        description: |
+          Porcentaje de crecimiento de las ventas del producto del 'mes_orden' respecto al 'mes_anterior'.
+          Calculado como ((Ventas Mes Actual - Ventas Mes Anterior) / Ventas Mes Anterior) * 100.
+          Un valor NULL indica que no hubo ventas en el mes anterior para poder calcular el crecimiento.
+        tests:
+          # Si sigues teniendo NULLs aquí y es aceptable, elimina este test.
+          # - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+
+  - name: agg_ingresos_productos
+    description: "Agregación mensual de ingresos por producto."
+    columns:
+      - name: ingresos_totales
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "ingresos_totales >= 0"
+      - name: mes_orden
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "mes_orden <= CURRENT_DATE"
+
+  - name: agg_intencion_compra_productos
+    description: "Agregación mensual de intención de compra por producto."
+    columns:
+      - name: mes_orden
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "mes_orden <= CURRENT_DATE"
+      - name: veces_agregado_al_carrito
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "veces_agregado_al_carrito >= 0"
+
+  - name: rpt_analisis_productos_kpis
+    description: "Reporte combinado de KPIs clave de producto por mes."
+    # Asegúrate de que el test unique_combination_of_columns esté aquí, a nivel del modelo
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - producto_id
+            - mes_orden
+    columns:
+      - name: cantidad_total_agregada_carrito
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "cantidad_total_agregada_carrito >= 0"
+      - name: crecimiento_porcentual_ventas
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "crecimiento_porcentual_ventas <= 10000 AND crecimiento_porcentual_ventas >= -100"
+      - name: ingresos_totales
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "ingresos_totales >= 0"
+      - name: mes_orden
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "mes_orden <= CURRENT_DATE"
+      - name: rank_ingresos_totales
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "rank_ingresos_totales >= 1"
+      - name: rank_crecimiento_ventas
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "rank_crecimiento_ventas >= 1"
+      - name: rank_veces_agregado_carrito
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "rank_veces_agregado_carrito >= 1"
+      - name: veces_agregado_al_carrito
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "veces_agregado_al_carrito >= 0"

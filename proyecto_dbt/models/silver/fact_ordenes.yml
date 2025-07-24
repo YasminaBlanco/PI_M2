@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: fact_ordenes
+    description: |
+      Tabla de hechos que representa cada línea de detalle de una orden de compra.
+      Contiene las métricas de cantidad y precio en el momento de la compra, y las claves
+      para unirse a las dimensiones de producto y usuario.
+    columns:
+      - name: detalle_id
+        description: "Identificador único de la línea de detalle de la orden. Clave primaria para esta tabla."
+        tests:
+          - unique
+          - not_null
+      - name: orden_id
+        description: "Identificador único de la orden a la que pertenece esta línea de detalle."
+        tests:
+          - not_null
+      - name: usuario_id
+        description: "Identificador del usuario que realizó la orden. Clave foránea a 'dim_usuarios'."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_usuarios')
+              field: usuario_id
+      - name: producto_id
+        description: "Identificador del producto en esta línea de la orden. Clave foránea a 'dim_productos'."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_productos')
+              field: producto_id
+      - name: cantidad
+        description: "Cantidad de unidades del producto compradas en esta línea de orden."
+      - name: precio_unitario_orden
+        description: "Precio unitario del producto en el momento exacto de la compra (histórico)."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: subtotal_linea
+        description: "Cálculo del subtotal para esta línea de la orden (cantidad * precio_unitario_orden)."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: fecha_orden
+        description: "Fecha en que se realizó la orden."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: total_orden
+        description: "Total general de la orden (puede incluir impuestos, envío, descuentos a nivel de orden)."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: estado_orden
+        description: "Estado actual de la orden (ej. 'pendiente', 'completado', 'cancelado')."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Pendiente', 'Completado', 'Cancelado', 'Enviado']

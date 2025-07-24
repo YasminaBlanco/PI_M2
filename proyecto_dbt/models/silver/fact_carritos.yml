@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: fact_carritos
+    description: |
+      Tabla de hechos que registra cada instancia en que un producto es agregado a un carrito.
+      Representa la intención de compra del usuario antes de la conversión a una orden.
+    columns:
+      - name: carrito_id
+        description: "Identificador único del registro del carrito."
+        tests:
+          - not_null # Puede no ser unique si el mismo producto se agrega varias veces al mismo carrito en diferentes momentos
+      - name: usuario_id
+        description: "Identificador del usuario propietario del carrito. Clave foránea a 'dim_usuarios'."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_usuarios')
+              field: usuario_id
+      - name: producto_id
+        description: "Identificador del producto agregado al carrito. Clave foránea a 'dim_productos'."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_productos')
+              field: producto_id
+      - name: cantidad_agregada_carrito
+        description: "Cantidad de unidades del producto agregadas al carrito en este evento."
+      - name: fecha_agregado_carrito
+        description: "Fecha en que el producto fue agregado al carrito."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: nombre_producto
+        description: "Nombre del producto, unida desde la dimensión de productos."
+      - name: nombre_categoria
+        description: "Nombre de la categoría del producto, unida desde la dimensión de productos."

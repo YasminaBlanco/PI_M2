@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: dim_productos
+    description: |
+      Dimensión de productos enriquecida con el nombre de su categoría.
+      Contiene información limpia y validada sobre cada producto.
+      Es la tabla maestra para toda la información relacionada con productos.
+    columns:
+      - name: producto_id
+        description: "Identificador único del producto. Clave primaria."
+        tests:
+          - unique
+          - not_null
+      - name: nombre_producto
+        description: "Nombre del producto, limpio (espacios trimmeados)."
+        tests:
+          - not_null
+      - name: descripcion_producto
+        description: "Descripción detallada del producto."
+      - name: precio_unitario_actual
+        description: "Precio de venta actual del producto. Debe ser no nulo y no negativo."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: numeric
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: stock_actual
+        description: "Cantidad de unidades en stock del producto. Puede ser nulo si no se gestiona stock o 0 si está agotado."
+      - name: categoria_id
+        description: "Identificador de la categoría a la que pertenece el producto. Clave foránea a 'dim_categorias'."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_categorias')
+              field: categoria_id
+      - name: nombre_categoria
+        description: "Nombre de la categoría, unida desde 'dim_categorias'."

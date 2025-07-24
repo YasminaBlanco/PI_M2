@@ -1,0 +1,12 @@
+ecommerce:
+  outputs:
+    dev:
+      dbname: ecommercedb
+      host: db
+      pass: yas01
+      port: 5432
+      schema: public
+      threads: 4
+      type: postgres
+      user: admin
+  target: dev
