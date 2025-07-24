@@ -119,7 +119,7 @@ docker-compose up --build -d
 ```
 Verifica que el contenedor de la base de datos (`db`) esté en ejecución.
 
-### 4. Configuración y Carga de Datos Iniciales (Módulo ORM)
+### 4 👉[Configuración y Carga de Datos Iniciales](orm/README.md)👈 (hacer click para ir a la sección)
 
 Esta sección se encarga de preparar la base de datos y cargar los datos iniciales.
 
@@ -133,7 +133,7 @@ Esta sección se encarga de preparar la base de datos y cargar los datos inicial
     python cargar_datos.py
     ```
 
-### 5. Ejecución de Modelos dbt
+### 5. 👉[Ejecución de Modelos dbt](proyecto_dbt/README.md)👈 (hacer click para ir a la sección)
 
 Una vez que la base de datos esté poblada, navega al contenedor desde la consola bash para transformar tus datos.
 Con los siguientes comandos:

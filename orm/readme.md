@@ -18,15 +18,15 @@ Se ha configurado un sistema de gestión de bases de datos relacional (**Postgre
 
 * **Creación de la Base de Datos:** Se creó una base de datos de trabajo dedicada al proyecto. (`ecommercedb`)
 
-* **Conexión vía ORM:** El módulo `db_conector.py` encapsula la lógica de conexión a PostgreSQL, utilizando variables de entorno para gestionar las credenciales de forma segura. Esto prepara el entorno para que los scripts de Python interactúen con la base de datos a través de una capa de abstracción (ORM).
+* **Conexión vía ORM:** El módulo [db_conector.py](db_conector.py) encapsula la lógica de conexión a PostgreSQL, utilizando variables de entorno para gestionar las credenciales de forma segura. Esto prepara el entorno para que los scripts de Python interactúen con la base de datos a través de una capa de abstracción (ORM).
 
 ### 2. Carga Inicial de Datos
 
 La carga de datos iniciales es un paso crítico para poblar la base de datos con la información cruda del e-commerce.
 
-* **Creación de Tablas:** El script `crear_tablas.py` es responsable de definir el esquema de la base de datos. Este script crea las tablas necesarias en PostgreSQL, basándose en la estructura de los datos de origen.
+* **Creación de Tablas:** El script [crear_tablas.py](crear_tablas.py) es responsable de definir el esquema de la base de datos. Este script crea las tablas necesarias en PostgreSQL, basándose en la estructura de los datos de origen.
 
-* **Carga de Datos:** El script `cargar_datos.py` se encarga de leer los datos proporcionados en archivos los arhivos .sql que se encuentran en la carpeta `orm/sql` e importarlos a las tablas correspondientes en la base de datos.
+* **Carga de Datos:** El script [crear_datos.py](crear_datos.py) se encarga de leer los datos proporcionados en archivos los arhivos .sql que se encuentran en la carpeta `orm/sql` e importarlos a las tablas correspondientes en la base de datos.
 
 ### 3. Análisis Exploratorio y Evaluación de Calidad de Datos
 
@@ -44,7 +44,7 @@ Se llevó a cabo un exhaustivo análisis exploratorio de datos (EDA) para compre
     * ![Consultas SQL](../assets/orm/exploracion_consulta_sql_categorias.png)
 
 * **Análisis Jupyter:** Se llevó a cabo también un análisis exploratorio de datos para comprender el contenido y la calidad de la información.
-    * Mediante un notebook de Jupyter que está en la carpeta `orm/exploracion_tablas.ipynb`.
+    * Mediante un notebook de Jupyter que está en la carpeta [exploracion_tablas.ipynb](exploracion_tablas.ipynb).
     * **Carrito:** ¿Qué productos se agregan más al carrito?
         ![Análisis Jupyter](../assets/orm/exploracion_consulta_ipynb_carrito.png)
     * **Ingresos:** ¿Qué productos generan más ingresos totales?
